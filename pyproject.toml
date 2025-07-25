@@ -8,7 +8,7 @@ description = ""
 authors = [{ name = "Henry Skiba", email = "henry.skiba@frgrisk.com" }]
 readme = "README.md"
 requires-python = ">=3.11"
-dependencies = ["strands-agents[openai] (>=1.1.0,<2.0.0)"]
+dependencies = ["strands-agents-tools (>=0.2.2,<0.3.0)", "strands-agents[litellm] (>=1.1.0,<2.0.0)"]
 
 
 [build-system]
