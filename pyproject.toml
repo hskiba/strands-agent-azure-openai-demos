@@ -2,9 +2,9 @@
 package-mode = false
 
 [project]
-name = "strands-agent-openai-demo"
+name = "strands-agent-azure-openai-demos"
 version = "0.1.0"
-description = ""
+description = "Examples of using Strands Agents SDK with OpenAI and Azure OpenAI"
 authors = [{ name = "Henry Skiba", email = "henry.skiba@frgrisk.com" }]
 readme = "README.md"
 requires-python = ">=3.11"

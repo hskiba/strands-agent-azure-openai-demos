@@ -15,7 +15,7 @@ This repository provides examples of using [Strands Agents SDK](https://strandsa
 1. Clone this repository:
 ```bash
 git clone <repository-url>
-cd strands-agent-openai-demo
+cd strands-agent-azure-openai-demos
 ```
 
 2. Install dependencies:
@@ -41,7 +41,7 @@ export AZURE_DEPLOYMENT_NAME="your-deployment-name"  # optional
 ## 📁 Repository Structure
 
 ```
-strands-agent-openai-demo/
+strands-agent-azure-openai-demos/
 ├── openai_agent.py      # Basic agent with calculator and time tools
 ├── example_usage.py     # Advanced examples with multiple tools
 ├── azure_example.py     # Azure OpenAI specific configuration
