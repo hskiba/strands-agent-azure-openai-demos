@@ -13,27 +13,30 @@ This repository provides examples of using [Strands Agents SDK](https://strandsa
 ### Installation
 
 1. Clone this repository:
-```bash
-git clone <repository-url>
-cd strands-agent-azure-openai-demos
-```
+
+    ```bash
+    git clone <repository-url>
+    cd strands-agent-azure-openai-demos
+    ```
 
 2. Install Poetry (if not already installed):
-   - **macOS/Linux/WSL**: `curl -sSL https://install.python-poetry.org | python3 -`
-   - **Windows PowerShell**: `(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -`
-   - For more installation options, see [Poetry's official documentation](https://python-poetry.org/docs/#installation)
+    - **macOS/Linux/WSL**: `curl -sSL https://install.python-poetry.org | python3 -`
+    - **Windows PowerShell**: `(Invoke-WebRequest -Uri https://install.python-poetry.org -UseBasicParsing).Content | py -`
+    - For more installation options, see [Poetry's official documentation](https://python-poetry.org/docs/#installation)
 
 3. Install dependencies:
-```bash
-poetry install
-```
+
+    ```bash
+    poetry install
+    ```
 
 4. Set up environment variables for Azure OpenAI:
-```bash
-export AZURE_OPENAI_API_KEY="your-azure-api-key"
-export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com"
-export AZURE_DEPLOYMENT_NAME="your-deployment-name"
-```
+
+    ```bash
+    export AZURE_OPENAI_API_KEY="your-azure-api-key"
+    export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com"
+    export AZURE_DEPLOYMENT_NAME="your-deployment-name"
+    ```
 
 ## 📁 Repository Structure
 
@@ -59,6 +62,7 @@ poetry run python openai_agent.py
 ```
 
 Features:
+
 - Basic mathematical calculations
 - Current time queries
 - Performance metrics display
@@ -72,6 +76,7 @@ poetry run python example_usage.py
 ```
 
 Includes:
+
 - Custom tool creation with `@tool` decorator
 - Multiple tool orchestration
 - Python code execution via REPL
@@ -87,6 +92,7 @@ poetry run python azure_example.py
 ```
 
 Features:
+
 - Configuration validation
 - Interactive mode
 - Error handling and troubleshooting tips
@@ -101,6 +107,7 @@ poetry run python file_system.py
 ```
 
 Features:
+
 - Read and write files
 - File manipulation using built-in editor
 - Safe file operations with proper error handling
@@ -114,6 +121,7 @@ For information on available tools and how to create custom tools, see the [Stra
 ### Azure OpenAI Model Selection
 
 The model is configured through environment variables:
+
 - `AZURE_DEPLOYMENT_NAME`: Your Azure OpenAI deployment name
 - The deployment should be configured in Azure portal with your chosen model (e.g., gpt-4, gpt-4-turbo)
 
@@ -132,6 +140,7 @@ model = LiteLLMModel(
 ## 📊 Metrics and Monitoring
 
 All examples include performance metrics:
+
 - Input/Output token counts
 - Total token usage
 - Execution time
