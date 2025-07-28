@@ -19,10 +19,7 @@ from strands import Agent
 from strands.models.litellm import LiteLLMModel
 from strands_tools import calculator, shell, file_read
 
-# Disable terminal CPR warnings for shell tool
-os.environ['TERM'] = 'dumb'
-# Auto-accept prompts for non-interactive mode
-os.environ['CI'] = 'true'
+# Keep terminal settings default to allow prompts
 
 
 class AzureOpenAIConfig:
@@ -67,10 +64,15 @@ def create_callback_handler():
             tool = kwargs["current_tool_use"]
             tool_id = tool.get("toolUseId")
             tool_name = tool.get("name")
+            tool_input = tool.get("input", {})
             
             if tool_id and tool_id not in tool_use_ids and tool_name:
-                # Print tool usage
-                print(f"\n[Using tool: {tool_name}]")
+                # Print tool usage with input details for shell commands
+                if tool_name == "shell" and "command" in tool_input:
+                    print(f"\n[Using tool: {tool_name}]")
+                    print(f"[Command: {tool_input['command']}]")
+                else:
+                    print(f"\n[Using tool: {tool_name}]")
                 tool_use_ids.add(tool_id)
     
     return callback_handler
@@ -80,8 +82,7 @@ def create_azure_agent(
     deployment_name: str,
     temperature: float = 0.7,
     max_tokens: int = 2000,
-    system_prompt: Optional[str] = None,
-    use_callback: bool = True
+    system_prompt: Optional[str] = None
 ) -> Agent:
     """
     Create a Strands agent configured for Azure OpenAI.
@@ -91,7 +92,6 @@ def create_azure_agent(
         temperature: Response variability (0.0-1.0)
         max_tokens: Maximum response tokens
         system_prompt: Custom system prompt
-        use_callback: Whether to use streaming callback handler
     
     Returns:
         Configured Agent instance
@@ -114,13 +114,10 @@ def create_azure_agent(
         )
     
     # Create agent with tools
-    callback = create_callback_handler() if use_callback else None
-    
     agent = Agent(
         model=model,
         tools=[calculator, shell, file_read],
-        system_prompt=system_prompt,
-        callback_handler=callback
+        system_prompt=system_prompt
     )
     
     return agent
@@ -163,11 +160,11 @@ def demonstrate_capabilities(agent: Agent):
         print(f"Query: {example['query']}\n")
         
         try:
-            # Execute query - callback handler will print the response
+            # Execute query
             response = agent(example['query'])
             
-            # Add newline after streamed response
-            print()
+            print("Response:")
+            print(response.message)
             
             # Show metrics
             if hasattr(response, 'metrics'):
@@ -224,9 +221,9 @@ def main():
             
             if user_input:
                 try:
-                    print("\nResponse:")
                     response = agent(user_input)
-                    print()  # Add newline after streamed response
+                    print("\nResponse:")
+                    print(response.message)
                 except Exception as e:
                     print(f"\nError: {str(e)}")
         
