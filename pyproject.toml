@@ -1,6 +1,9 @@
 [tool.poetry]
 package-mode = false
 
+[tool.poetry.group.dev.dependencies]
+black = "^25.1.0"
+
 [project]
 name = "strands-agent-azure-openai-demos"
 version = "0.1.0"

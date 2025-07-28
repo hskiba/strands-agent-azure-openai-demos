@@ -25,12 +25,12 @@ from strands_tools import calculator, current_time, python_repl
 def weather_info(location: str) -> str:
     """
     Get weather information for a location (mock implementation).
-    
+
     In a real application, this would call a weather API service.
-    
+
     Args:
         location: City or location name
-        
+
     Returns:
         Weather information string
     """
@@ -40,44 +40,46 @@ def weather_info(location: str) -> str:
         "New York": "Sunny, 75°F (24°C)",
         "London": "Rainy, 55°F (13°C)",
         "Tokyo": "Clear, 72°F (22°C)",
-        "default": "Sunny, 72°F (22°C)"
+        "default": "Sunny, 72°F (22°C)",
     }
-    
-    return f"Weather in {location}: {weather_data.get(location, weather_data['default'])}"
+
+    return (
+        f"Weather in {location}: {weather_data.get(location, weather_data['default'])}"
+    )
 
 
 @tool
 def word_analyzer(text: str) -> Dict[str, Any]:
     """
     Analyze text and return statistics.
-    
+
     Args:
         text: Text to analyze
-        
+
     Returns:
         Dictionary with word count, character count, and most common word
     """
     words = text.lower().split()
     word_freq = {}
-    
+
     for word in words:
         word = word.strip('.,!?;:"')
         word_freq[word] = word_freq.get(word, 0) + 1
-    
+
     most_common = max(word_freq.items(), key=lambda x: x[1]) if word_freq else ("", 0)
-    
+
     return {
         "word_count": len(words),
         "character_count": len(text),
         "most_common_word": most_common[0],
-        "most_common_count": most_common[1]
+        "most_common_count": most_common[1],
     }
 
 
 def create_demo_agent() -> Agent:
     """
     Create a demonstration agent with multiple tools.
-    
+
     Returns:
         Configured Agent instance
     """
@@ -88,16 +90,16 @@ def create_demo_agent() -> Agent:
     else:
         model_id = "gpt-4o-mini"
         print("Using standard OpenAI configuration")
-    
+
     # Create model
     model = LiteLLMModel(
         model_id=model_id,
         params={
             "temperature": 0.7,
             "max_tokens": 2000,
-        }
+        },
     )
-    
+
     # Create agent with all tools
     agent = Agent(
         model=model,
@@ -106,16 +108,16 @@ def create_demo_agent() -> Agent:
             "You are a helpful AI assistant with access to various tools. "
             "Use them to provide accurate and detailed responses. "
             "When using the Python REPL, always show both the code and results."
-        )
+        ),
     )
-    
+
     return agent
 
 
 def run_example(agent: Agent, description: str, query: str) -> None:
     """
     Run an example query and display results with metrics.
-    
+
     Args:
         agent: The Strands agent
         description: Description of the example
@@ -126,11 +128,11 @@ def run_example(agent: Agent, description: str, query: str) -> None:
     print(f"{'='*60}")
     print(f"Query: {query}")
     print("\nResponse:")
-    
+
     # Execute query
     response = agent(query)
     print(response.message)
-    
+
     # Display metrics
     metrics = response.metrics.accumulated_usage
     print(f"\nMetrics:")
@@ -138,9 +140,9 @@ def run_example(agent: Agent, description: str, query: str) -> None:
     print(f"  • Output tokens: {metrics['outputTokens']}")
     print(f"  • Total tokens: {metrics['inputTokens'] + metrics['outputTokens']}")
     print(f"  • Execution time: {sum(response.metrics.cycle_durations):.2f}s")
-    
+
     # Show tool usage if any
-    if hasattr(response, 'tool_calls') and response.tool_calls:
+    if hasattr(response, "tool_calls") and response.tool_calls:
         print(f"  • Tools used: {len(response.tool_calls)}")
 
 
@@ -155,20 +157,16 @@ def main():
         print("  • OPENAI_API_KEY for standard OpenAI")
         print("  • AZURE_API_KEY (with AZURE_API_BASE and AZURE_API_VERSION) for Azure")
         sys.exit(1)
-    
+
     print("Strands Agent Examples")
     print("=" * 60)
-    
+
     # Create agent
     agent = create_demo_agent()
-    
+
     # Example 1: Simple calculation
-    run_example(
-        agent,
-        "Simple Calculation",
-        "What is 1234 * 5678?"
-    )
-    
+    run_example(agent, "Simple Calculation", "What is 1234 * 5678?")
+
     # Example 2: Multiple tools
     run_example(
         agent,
@@ -176,27 +174,27 @@ def main():
         """Please help me with these tasks:
 1. What's the current time?
 2. Calculate the compound interest on $10,000 at 5% annual rate for 3 years
-3. What's the weather in San Francisco?"""
+3. What's the weather in San Francisco?""",
     )
-    
+
     # Example 3: Python code execution
     run_example(
         agent,
         "Python Code Execution",
         """Write a Python function to generate the first n prime numbers.
 Then use it to find the first 15 prime numbers.
-Show me both the code and the results."""
+Show me both the code and the results.""",
     )
-    
+
     # Example 4: Text analysis
     run_example(
         agent,
         "Text Analysis with Custom Tool",
         """Analyze this text: 'The quick brown fox jumps over the lazy dog. 
 The dog was really lazy but the fox was extremely quick.'
-Give me the word statistics."""
+Give me the word statistics.""",
     )
-    
+
     # Example 5: Complex multi-step task
     run_example(
         agent,
@@ -208,10 +206,10 @@ Give me the word statistics."""
 4. Write a Python function to calculate travel expenses and use it to find the total cost if:
    - Hotel: 15000 JPY per night for 5 nights
    - Food: 5000 JPY per day for 5 days
-   - Transportation: 3000 JPY total"""
+   - Transportation: 3000 JPY total""",
     )
-    
-    print("\n" + "="*60)
+
+    print("\n" + "=" * 60)
     print("All examples completed successfully!")
 
 

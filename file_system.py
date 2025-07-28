@@ -20,4 +20,6 @@ file_agent = Agent(
     system_prompt=FILE_SYSTEM_PROMPT,
     tools=[file_read, file_write, editor, shell],
 )
-response = file_agent("Can you check what operating system I'm using and the current directory?")
+response = file_agent(
+    "Can you check what operating system I'm using and the current directory?"
+)
