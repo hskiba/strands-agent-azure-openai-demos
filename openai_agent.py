@@ -76,9 +76,9 @@ def main():
     # Determine model ID based on environment
     if os.getenv("AZURE_API_KEY"):
         # For Azure, you need to specify the deployment name
-        model_id = "azure/gpt-4"  # Update with your deployment name
+        model_id = os.getenv("AZURE_DEPLOYMENT_NAME")
     else:
-        model_id = "gpt-4o"
+        model_id = "gpt-4.1"
 
     # Create agent
     agent = create_openai_agent(model_id=model_id)

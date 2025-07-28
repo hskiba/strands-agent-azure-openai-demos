@@ -33,10 +33,13 @@ This repository provides examples of using [Strands Agents SDK](https://strandsa
 4. Set up environment variables for Azure OpenAI:
 
     ```bash
-    export AZURE_OPENAI_API_KEY="your-azure-api-key"
-    export AZURE_OPENAI_ENDPOINT="https://your-resource.openai.azure.com"
+    export AZURE_API_KEY="your-azure-api-key"
+    export AZURE_API_VERSION="your-azure-api-version"
+    export AZURE_API_BASE="https://your-resource.openai.azure.com"
     export AZURE_DEPLOYMENT_NAME="your-deployment-name"
     ```
+
+**Note**: To obtain api-version one can navigate to **Deployments** and click on a model under the **Name** column. In the example where they show authentication of an API key, the api-version can be found.
 
 ## 📁 Repository Structure
 
@@ -55,7 +58,7 @@ strands-agent-azure-openai-demos/
 
 ### Basic Agent (openai_agent.py)
 
-A simple agent with calculator and time tools:
+A simple agent with calculator and time tools. To run this you need OPENAI credentials:
 
 ```bash
 poetry run python openai_agent.py
@@ -69,7 +72,7 @@ Features:
 
 ### Advanced Examples (example_usage.py)
 
-Demonstrates multiple capabilities:
+Demonstrates multiple capabilities and works with Azure if environment variables are set up:
 
 ```bash
 poetry run python example_usage.py
@@ -123,13 +126,15 @@ For information on available tools and how to create custom tools, see the [Stra
 The model is configured through environment variables:
 
 - `AZURE_DEPLOYMENT_NAME`: Your Azure OpenAI deployment name
-- The deployment should be configured in Azure portal with your chosen model (e.g., gpt-4, gpt-4-turbo)
+- The deployment should be configured in Azure portal with your chosen model (e.g., gpt-4.1 gpt-4-turbo)
 
 ### Parameters
 
 ```python
+model_id = os.getenv("AZURE_DEPLOYMENT_NAME")
+
 model = LiteLLMModel(
-    model_id=f"azure/{deployment_name}",
+    model_id=f"azure/{model_id}",
     params={
         "temperature": 0.7,      # Response creativity (0.0-1.0)
         "max_tokens": 2000,      # Maximum response length

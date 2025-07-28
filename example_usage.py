@@ -85,21 +85,29 @@ def create_demo_agent() -> Agent:
     """
     # Determine configuration based on environment
     if os.getenv("AZURE_API_KEY"):
-        model_id = "azure/gpt-4"  # Update with your deployment
+        model_id = os.getenv("AZURE_DEPLOYMENT_NAME") # Update with your deployment
         print("Using Azure OpenAI configuration")
     else:
         model_id = "gpt-4o-mini"
         print("Using standard OpenAI configuration")
 
     # Create model
+    # model = LiteLLMModel(
+    #     model_id=model_id,
+    #     params={
+    #         "temperature": 0.7,
+    #         "max_tokens": 2000,
+    #     },
+    # )
+
+    # Create model with Azure configuration
     model = LiteLLMModel(
-        model_id=model_id,
+        model_id=f"azure/{model_id}",
         params={
-            "temperature": 0.7,
             "max_tokens": 2000,
+            "temperature": 0.7,
         },
     )
-
     # Create agent with all tools
     agent = Agent(
         model=model,
