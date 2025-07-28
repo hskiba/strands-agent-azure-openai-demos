@@ -19,6 +19,11 @@ from strands import Agent
 from strands.models.litellm import LiteLLMModel
 from strands_tools import calculator, shell, file_read
 
+# Disable terminal CPR warnings for shell tool
+os.environ['TERM'] = 'dumb'
+# Auto-accept prompts for non-interactive mode
+os.environ['CI'] = 'true'
+
 
 class AzureOpenAIConfig:
     """Configuration helper for Azure OpenAI."""
@@ -50,11 +55,33 @@ class AzureOpenAIConfig:
         print(f"  • API Key: {'*' * 10 if self.api_key else 'Not set'}")
 
 
+def create_callback_handler():
+    """Create a callback handler for better output formatting."""
+    tool_use_ids = set()
+    
+    def callback_handler(**kwargs):
+        if "data" in kwargs:
+            # Print streamed text chunks
+            print(kwargs["data"], end="", flush=True)
+        elif "current_tool_use" in kwargs:
+            tool = kwargs["current_tool_use"]
+            tool_id = tool.get("toolUseId")
+            tool_name = tool.get("name")
+            
+            if tool_id and tool_id not in tool_use_ids and tool_name:
+                # Print tool usage
+                print(f"\n[Using tool: {tool_name}]")
+                tool_use_ids.add(tool_id)
+    
+    return callback_handler
+
+
 def create_azure_agent(
     deployment_name: str,
     temperature: float = 0.7,
     max_tokens: int = 2000,
-    system_prompt: Optional[str] = None
+    system_prompt: Optional[str] = None,
+    use_callback: bool = True
 ) -> Agent:
     """
     Create a Strands agent configured for Azure OpenAI.
@@ -64,6 +91,7 @@ def create_azure_agent(
         temperature: Response variability (0.0-1.0)
         max_tokens: Maximum response tokens
         system_prompt: Custom system prompt
+        use_callback: Whether to use streaming callback handler
     
     Returns:
         Configured Agent instance
@@ -86,10 +114,13 @@ def create_azure_agent(
         )
     
     # Create agent with tools
+    callback = create_callback_handler() if use_callback else None
+    
     agent = Agent(
         model=model,
         tools=[calculator, shell, file_read],
-        system_prompt=system_prompt
+        system_prompt=system_prompt,
+        callback_handler=callback
     )
     
     return agent
@@ -132,19 +163,22 @@ def demonstrate_capabilities(agent: Agent):
         print(f"Query: {example['query']}\n")
         
         try:
+            # Execute query - callback handler will print the response
             response = agent(example['query'])
-            print("Response:")
-            print(response.message)
+            
+            # Add newline after streamed response
+            print()
             
             # Show metrics
-            metrics = response.metrics.accumulated_usage
-            print(f"\nMetrics:")
-            print(f"  • Input tokens: {metrics['inputTokens']}")
-            print(f"  • Output tokens: {metrics['outputTokens']}")
-            print(f"  • Execution time: {sum(response.metrics.cycle_durations):.2f}s")
+            if hasattr(response, 'metrics'):
+                metrics = response.metrics.accumulated_usage
+                print(f"\nMetrics:")
+                print(f"  • Input tokens: {metrics['inputTokens']}")
+                print(f"  • Output tokens: {metrics['outputTokens']}")
+                print(f"  • Execution time: {sum(response.metrics.cycle_durations):.2f}s")
             
         except Exception as e:
-            print(f"Error: {str(e)}")
+            print(f"\nError: {str(e)}")
 
 
 def main():
@@ -190,11 +224,11 @@ def main():
             
             if user_input:
                 try:
-                    response = agent(user_input)
                     print("\nResponse:")
-                    print(response.message)
+                    response = agent(user_input)
+                    print()  # Add newline after streamed response
                 except Exception as e:
-                    print(f"Error: {str(e)}")
+                    print(f"\nError: {str(e)}")
         
         print("\nThank you for using Azure OpenAI with Strands!")
         
