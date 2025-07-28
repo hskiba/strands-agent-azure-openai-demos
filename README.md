@@ -85,7 +85,7 @@ Includes:
 Specific configuration for Azure OpenAI:
 
 ```bash
-python azure_example.py
+poetry run python azure_example.py
 ```
 
 Features:
@@ -94,28 +94,22 @@ Features:
 - Error handling and troubleshooting tips
 - Multiple demonstration scenarios
 
-## 🛠️ Available Tools
+### File System Specialist (file_system.py)
 
-### Built-in Tools (from strands-agents-tools)
+A specialized agent focused on file operations:
 
-- **calculator**: Mathematical operations
-- **current_time**: Get current date/time
-- **python_repl**: Execute Python code
-- **shell**: Run shell commands
-- **file_read**: Read local files
-
-### Custom Tools
-
-Create your own tools using the `@tool` decorator:
-
-```python
-from strands import tool
-
-@tool
-def my_custom_tool(param: str) -> str:
-    """Tool description for the agent."""
-    return f"Processed: {param}"
+```bash
+poetry run python file_system.py
 ```
+
+Features:
+- Read and write files
+- File manipulation using built-in editor
+- Safe file operations with proper error handling
+
+## 🛠️ Tools
+
+For information on available tools and how to create custom tools, see the [Strands Agents Documentation](https://strandsagents.com).
 
 ## 🔧 Configuration Options
 
